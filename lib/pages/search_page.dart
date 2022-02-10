@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:redbull/data/choice_chips.dart';
 import 'package:redbull/models/choice_chip_model.dart';
+import 'package:redbull/pages/filter_page.dart';
 import 'package:redbull/services/search_api_services.dart';
 import 'package:redbull/utils/tiles.dart';
 
@@ -18,7 +19,7 @@ class _SearchPageState extends State<SearchPage> {
   IconData searchIcon = Icons.search;
   final _formKey = GlobalKey<FormState>();
   TextEditingController searchText = TextEditingController();
-  AutovalidateMode _autovalid = AutovalidateMode.disabled;
+  final AutovalidateMode _autovalid = AutovalidateMode.disabled;
   final double spacing = 8;
   List<ChoiceChipData> choiceChips = ChoiceChips.all;
   String selectedChip = "All";
@@ -117,6 +118,7 @@ class _SearchPageState extends State<SearchPage> {
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(bottom: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
@@ -132,9 +134,9 @@ class _SearchPageState extends State<SearchPage> {
               child: Expanded(
                 child: TextFormField(
                   controller: searchText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: InputBorder.none,
-                    hintText: "      Enter search",
+                    hintText: " Enter search",
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -157,12 +159,18 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 onPressed: () {
                   final isValid = _formKey.currentState!.validate();
+                  if (searchIcon == Icons.filter_list) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FilterPage()),
+                    );
+                  }
                   if (isValid) {
                     setState(() {
                       searchIcon = Icons.filter_list;
                       SearchApi().fetchPost(searchText.text);
                     });
-                  } else {}
+                  }
                 },
                 child: Icon(
                   searchIcon,

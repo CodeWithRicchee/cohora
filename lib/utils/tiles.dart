@@ -75,6 +75,8 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
                   },
                   child: Card(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ListTile(
                           title: Text(snapshot.data![index].userInfo!.nickname
@@ -84,6 +86,10 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
                                 .data![index].userInfo!.photoUrl
                                 .toString()),
                           ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(snapshot.data![index].text.toString()),
                         ),
                         ListView.builder(
                             shrinkWrap: true,
