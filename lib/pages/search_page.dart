@@ -153,7 +153,7 @@ class _SearchPageState extends State<SearchPage> {
                       btn = searchBtn(Image.asset("assets/icons/search.png"));
                     } else {
                       isTapped = true;
-                      btn = searchBtn(Image.asset("assets/icons/filter.svg"));
+                      btn = searchBtn(Image.asset("assets/icons/filter.png"));
                     }
                   });
                 },
@@ -181,7 +181,7 @@ class _SearchPageState extends State<SearchPage> {
               if (isValid) {
                 setState(() {
                   isTapped = true;
-                  btn = searchBtn(Image.asset("assets/icons/filter.svg"));
+                  btn = searchBtn(Image.asset("assets/icons/filter.png"));
                   SearchApi().fetchPost(searchText.text.trim());
                 });
               }
