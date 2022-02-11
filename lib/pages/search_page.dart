@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:redbull/data/choice_chips.dart';
 import 'package:redbull/models/choice_chip_model.dart';
 import 'package:redbull/pages/filter_page.dart';
 import 'package:redbull/services/search_api_services.dart';
 import 'package:redbull/utils/tiles.dart';
+import 'package:redbull/utils/widgets.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key, required this.title}) : super(key: key);
@@ -16,16 +16,18 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  IconData searchIcon = Icons.search;
+  bool isTapped = false;
   final _formKey = GlobalKey<FormState>();
   TextEditingController searchText = TextEditingController();
   final AutovalidateMode _autovalid = AutovalidateMode.disabled;
   final double spacing = 8;
   List<ChoiceChipData> choiceChips = ChoiceChips.all;
-  String selectedChip = "All";
-
+  String selectedChip = "Top";
+  Widget btn = searchBtn(Image.asset("assets/icons/search.png"));
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.only(top: 50),
@@ -33,16 +35,17 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            formMethod(),
+            searchBar(),
             SizedBox(
               height: 50,
               child: chioceChip(),
             ),
             searchText.text == ""
-                ? Expanded(
-                    child: Center(
-                    child: Lottie.asset('assets/27506-search-for-employee.json',
-                        width: 300, height: 300),
+                ? Center(
+                    child: Image.asset(
+                    "assets/undraw_Personal_info_re_ur1n.png",
+                    width: size.width * 0.9,
+                    height: size.width > 500 ? 300 : size.width * 0.8,
                   ))
                 : buildPages()
           ],
@@ -53,12 +56,20 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget buildPages() {
     switch (selectedChip) {
-      case "All":
-        return postMethod(searchText.text);
+      case "Top":
+        return postMethod(searchText.text.trim());
+      case "Latest":
+        return searchComments(searchText.text.trim());
       case "People":
-        return profileMethod(searchText.text);
+        return profileMethod(searchText.text.trim());
       case "Comments":
-        return searchComments(searchText.text);
+        return searchComments(searchText.text.trim());
+      case "Photos":
+        return postMethod(searchText.text.trim());
+      case "Videos":
+        return searchComments("TODO");
+      case "Shopbuzz":
+        return searchComments("TODO");
       default:
         return Container();
     }
@@ -74,7 +85,7 @@ class _SearchPageState extends State<SearchPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 3),
                 child: ChoiceChip(
                   label: Text(choiceChip.label!),
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.black),
                   onSelected: (isSelected) => setState(() {
                     choiceChips = choiceChips.map((otherChip) {
@@ -88,24 +99,28 @@ class _SearchPageState extends State<SearchPage> {
                     }).toList();
                   }),
                   selected: choiceChip.isSelected!,
-                  selectedColor: Color.fromARGB(255, 185, 238, 204),
+                  selectedColor: const Color.fromARGB(255, 185, 238, 204),
+                  backgroundColor: Colors.white,
                 ),
               ))
           .toList(),
     );
   }
 
-  Form formMethod() {
+  Form searchBar() {
     return Form(
       key: _formKey,
       autovalidateMode: _autovalid,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
             onTap: () {
               setState(() {
-                searchIcon = Icons.search;
+                isTapped = false;
+                btn = searchBtn(Image.asset("assets/icons/search.png"));
+                searchText.clear();
               });
             },
             child: const Padding(
@@ -118,65 +133,63 @@ class _SearchPageState extends State<SearchPage> {
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(bottom: 10),
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    blurRadius: 1.0,
-                    spreadRadius: 1.0,
-                  ), //BoxShadow
-                  //BoxShadow
-                ],
+                border: Border.all(width: 0.3),
               ),
-              child: Expanded(
-                child: TextFormField(
-                  controller: searchText,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: " Enter search",
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return null;
-                    } else {
-                      return null;
-                    }
-                  },
+              child: TextFormField(
+                controller: searchText,
+                showCursor: false,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Enter search",
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    if (searchText.text == "") {
+                      isTapped = false;
+                      btn = searchBtn(Image.asset("assets/icons/search.png"));
+                    } else {
+                      isTapped = true;
+                      btn = searchBtn(Image.asset("assets/icons/filter.svg"));
+                    }
+                  });
+                },
+                // in Futurer if we need any validation like no numbers included in search text we can
+                // put condition over here
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return null;
+                  } else {
+                    return null;
+                  }
+                },
               ),
             ),
           ),
-          SizedBox(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  primary: Colors.white60,
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(10),
-                ),
-                onPressed: () {
-                  final isValid = _formKey.currentState!.validate();
-                  if (searchIcon == Icons.filter_list) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FilterPage()),
-                    );
-                  }
-                  if (isValid) {
-                    setState(() {
-                      searchIcon = Icons.filter_list;
-                      SearchApi().fetchPost(searchText.text);
-                    });
-                  }
-                },
-                child: Icon(
-                  searchIcon,
-                  size: 35,
-                  color: Colors.black,
-                )),
+          InkWell(
+            onTap: () {
+              final isValid = _formKey.currentState!.validate();
+              if (isTapped) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FilterPage()),
+                );
+              }
+              if (isValid) {
+                setState(() {
+                  isTapped = true;
+                  btn = searchBtn(Image.asset("assets/icons/filter.svg"));
+                  SearchApi().fetchPost(searchText.text.trim());
+                });
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 5),
+              child: btn,
+            ),
           )
         ],
       ),

@@ -4,8 +4,14 @@ import 'package:redbull/models/choice_chip_model.dart';
 class ChoiceChips {
   static final all = <ChoiceChipData>[
     ChoiceChipData(
-      label: 'All',
+      label: 'Top',
       isSelected: true,
+      selectedColor: Colors.blue,
+      textColor: Colors.white,
+    ),
+    ChoiceChipData(
+      label: 'Latest',
+      isSelected: false,
       selectedColor: Colors.blue,
       textColor: Colors.white,
     ),
@@ -29,6 +35,12 @@ class ChoiceChips {
     ),
     ChoiceChipData(
       label: 'Videos',
+      isSelected: false,
+      selectedColor: Colors.blue,
+      textColor: Colors.white,
+    ),
+    ChoiceChipData(
+      label: 'ShopBuzz',
       isSelected: false,
       selectedColor: Colors.blue,
       textColor: Colors.white,

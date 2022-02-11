@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:redbull/services/search_api_services.dart';
+import 'package:redbull/utils/html_tag_remover.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/post_model.dart';
 
@@ -13,6 +15,11 @@ FutureBuilder<List<Profiles>?> profileMethod(String query) {
               child: CircularProgressIndicator(),
             ),
           );
+        } else if (snapshot.data!.isEmpty) {
+          return Expanded(
+            child:
+                Center(child: Image.asset("assets/undraw_Empty_re_opql.png")),
+          );
         } else {
           return Expanded(
             child: ListView.builder(
@@ -21,26 +28,22 @@ FutureBuilder<List<Profiles>?> profileMethod(String query) {
               scrollDirection: Axis.vertical,
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    launchURL(snapshot.data![index].qrCode.toString());
-                  },
-                  child: Card(
-                    child: ListTile(
-                      title: Text(snapshot.data![index].displayName.toString()),
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            snapshot.data![index].photoUrl.toString()),
-                      ),
-                      subtitle: Text(snapshot.data![index].email.toString()),
-                      trailing: IconButton(
-                          onPressed: () {
-                            launchURL(snapshot.data![index].qrCode.toString());
-                          },
-                          icon: const Icon(
-                            Icons.send,
-                            color: Colors.blue,
-                          )),
+                return Card(
+                  child: ListTile(
+                    title: Text(snapshot.data![index].displayName.toString()),
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                          snapshot.data![index].photoUrl.toString()),
+                    ),
+                    subtitle: Text(snapshot.data![index].email.toString()),
+                    trailing: ElevatedButton(
+                      onPressed: () {
+                        launchURL(snapshot.data![index].qrCode.toString());
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shape: const StadiumBorder(),
+                          fixedSize: const Size(80, 30)),
+                      child: const Text("Follow"),
                     ),
                   ),
                 );
@@ -59,6 +62,14 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
           return const Expanded(
             child: Center(
               child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.data!.isEmpty) {
+          print("No data");
+          return Expanded(
+            child: Center(
+              child:
+                  Center(child: Image.asset("assets/undraw_Empty_re_opql.png")),
             ),
           );
         } else {
@@ -89,7 +100,11 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(snapshot.data![index].text.toString()),
+                          child: Text(
+                            parseHtmlString(
+                                snapshot.data![index].text.toString()),
+                            maxLines: 3,
+                          ),
                         ),
                         ListView.builder(
                             shrinkWrap: true,
@@ -107,7 +122,7 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
                                     errorBuilder:
                                         (context, error, stackTrace) =>
                                             Image.asset(
-                                      "assets/3828537.jpg",
+                                      "assets/image-not-found.png",
                                       fit: BoxFit.fill,
                                     ),
                                   ),
@@ -116,7 +131,7 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
                                 return SizedBox(
                                   height: 200,
                                   child: Image.asset(
-                                    "assets/3828537.jpg",
+                                    "assets/image-not-found.png",
                                     fit: BoxFit.fill,
                                   ),
                                 );
@@ -161,6 +176,14 @@ FutureBuilder<List<SearchComments>?> searchComments(String query) {
               child: CircularProgressIndicator(),
             ),
           );
+        } else if (snapshot.data!.isEmpty) {
+          print("No data");
+          return Expanded(
+            child: Center(
+              child:
+                  Center(child: Image.asset("assets/undraw_Empty_re_opql.png")),
+            ),
+          );
         } else {
           return Expanded(
             child: ListView.builder(
@@ -175,6 +198,7 @@ FutureBuilder<List<SearchComments>?> searchComments(String query) {
                   },
                   child: Card(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ListTile(
                           title: Text(snapshot
@@ -184,6 +208,14 @@ FutureBuilder<List<SearchComments>?> searchComments(String query) {
                             backgroundImage: NetworkImage(snapshot
                                 .data![index].postComment!.userInfo!.photoUrl
                                 .toString()),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            parseHtmlString(
+                                snapshot.data![index].post!.text.toString()),
+                            maxLines: 3,
                           ),
                         ),
                         ListView.builder(
@@ -201,10 +233,11 @@ FutureBuilder<List<SearchComments>?> searchComments(String query) {
                                         .data![index].post!.assets![index2].url
                                         .toString(),
                                     fit: BoxFit.fill,
+                                    height: 200,
                                     errorBuilder:
                                         (context, error, stackTrace) =>
                                             Image.asset(
-                                      "assets/3828537.jpg",
+                                      "assets/image-not-found.png",
                                       fit: BoxFit.fill,
                                     ),
                                   ),
@@ -213,7 +246,7 @@ FutureBuilder<List<SearchComments>?> searchComments(String query) {
                                 return SizedBox(
                                   height: 200,
                                   child: Image.asset(
-                                    "assets/3828537.jpg",
+                                    "assets/image-not-found.png",
                                     fit: BoxFit.fill,
                                   ),
                                 );
