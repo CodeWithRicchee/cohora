@@ -29,26 +29,29 @@ class _SearchPageState extends State<SearchPage> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.only(top: 50),
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            searchBar(),
-            SizedBox(
-              height: 50,
-              child: chioceChip(),
-            ),
-            searchText.text == ""
-                ? Center(
-                    child: Image.asset(
-                    "assets/undraw_Personal_info_re_ur1n.png",
-                    width: size.width * 0.9,
-                    height: size.width > 500 ? 300 : size.width * 0.8,
-                  ))
-                : buildPages()
-          ],
+      body: Center(
+        child: Container(
+          width: size.width > 500 ? 500 : size.width,
+          margin: const EdgeInsets.only(top: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              searchBar(),
+              SizedBox(
+                height: 50,
+                child: chioceChip(),
+              ),
+              searchText.text == ""
+                  ? Center(
+                      child: Image.asset(
+                      "assets/undraw_Personal_info_re_ur1n.png",
+                      width: size.width * 0.9,
+                      height: size.width > 500 ? 300 : size.width * 0.8,
+                    ))
+                  : buildPages()
+            ],
+          ),
         ),
       ),
     );
@@ -67,9 +70,9 @@ class _SearchPageState extends State<SearchPage> {
       case "Photos":
         return postMethod(searchText.text.trim());
       case "Videos":
-        return searchComments("TODO");
+        return searchComments("TODOo");
       case "Shopbuzz":
-        return searchComments("TODO");
+        return searchComments("TODOo");
       default:
         return Container();
     }
@@ -99,7 +102,7 @@ class _SearchPageState extends State<SearchPage> {
                     }).toList();
                   }),
                   selected: choiceChip.isSelected!,
-                  selectedColor: const Color.fromARGB(255, 185, 238, 204),
+                  selectedColor: const Color.fromRGBO(226, 247, 222, 1),
                   backgroundColor: Colors.white,
                 ),
               ))

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:redbull/services/search_api_services.dart';
 import 'package:redbull/utils/html_tag_remover.dart';
@@ -65,7 +66,6 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
             ),
           );
         } else if (snapshot.data!.isEmpty) {
-          print("No data");
           return Expanded(
             child: Center(
               child:
@@ -84,78 +84,116 @@ FutureBuilder<List<Posts>?> postMethod(String query) {
                   onTap: () {
                     launchURL(snapshot.data![index].viewUrl.toString());
                   },
-                  child: Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text(snapshot.data![index].userInfo!.nickname
-                              .toString()),
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(snapshot
-                                .data![index].userInfo!.photoUrl
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Card(
+                      elevation: 3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: Text(snapshot.data![index].userInfo!.nickname
                                 .toString()),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(snapshot
+                                  .data![index].userInfo!.photoUrl
+                                  .toString()),
+                            ),
+                            subtitle: Text(timeAgo(
+                                snapshot.data![index].createdAt.toString())),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Image.asset("assets/icons/Share.png"),
+                                ),
+                                const SizedBox(width: 20),
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Image.asset(
+                                      "assets/icons/DotsThreeOutline.png"),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            parseHtmlString(
-                                snapshot.data![index].text.toString()),
-                            maxLines: 3,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 8),
+                            child: Text(
+                              parseHtmlString(
+                                  snapshot.data![index].text.toString()),
+                              maxLines: 3,
+                            ),
                           ),
-                        ),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: snapshot.data![index].assets!.length,
-                            itemBuilder: (context, index2) {
-                              try {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  child: Image.network(
-                                    snapshot.data![index].assets![index2].url
-                                        .toString(),
-                                    fit: BoxFit.fill,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Image.asset(
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data![index].assets!.length,
+                              itemBuilder: (context, index2) {
+                                try {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: Image.network(
+                                      snapshot.data![index].assets![index2].url
+                                          .toString(),
+                                      fit: BoxFit.fill,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Image.asset(
+                                        "assets/image-not-found.png",
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  return SizedBox(
+                                    height: 200,
+                                    child: Image.asset(
                                       "assets/image-not-found.png",
                                       fit: BoxFit.fill,
                                     ),
-                                  ),
-                                );
-                              } catch (e) {
-                                return SizedBox(
-                                  height: 200,
+                                  );
+                                }
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Image.asset("assets/icons/Like.png"),
+                                ),
+                                const SizedBox(width: 5),
+                                Text('${snapshot.data![index].likes!.length}'),
+                                const SizedBox(width: 10),
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
                                   child: Image.asset(
-                                    "assets/image-not-found.png",
-                                    fit: BoxFit.fill,
-                                  ),
-                                );
-                              }
-                            }),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.recommend,
-                                color: Colors.red,
-                              ),
-                              const SizedBox(width: 5),
-                              Text('${snapshot.data![index].likes!.length}'),
-                              const Spacer(),
-                              Text(
-                                  '${snapshot.data![index].postComments!.length}'),
-                              const SizedBox(width: 5),
-                              const Icon(Icons.comment),
-                            ],
-                          ),
-                        )
-                      ],
+                                      "assets/icons/DotsThreeOutline (1).png"),
+                                ),
+                                const Spacer(),
+                                Text(
+                                    '${snapshot.data![index].postComments!.length}'),
+                                const SizedBox(width: 5),
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Image.asset(
+                                      "assets/icons/ChatCircleDots.png"),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 );

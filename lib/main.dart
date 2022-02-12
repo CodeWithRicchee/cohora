@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:redbull/pages/search_page.dart';
 
 void main() {
@@ -23,6 +23,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.rubikTextTheme(
+          Theme.of(context)
+              .textTheme, // If this is not set, then ThemeData.light().textTheme is used.
+        ),
       ),
       home: const SearchPage(title: 'Redbull'),
     );

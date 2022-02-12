@@ -40,7 +40,7 @@ class ChoiceChips {
       textColor: Colors.white,
     ),
     ChoiceChipData(
-      label: 'ShopBuzz',
+      label: 'Shopbuzz',
       isSelected: false,
       selectedColor: Colors.blue,
       textColor: Colors.white,
